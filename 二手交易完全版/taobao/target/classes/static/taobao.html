@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>二手交易系统</title>
+    <!-- 引入 Vue 和 Element UI 的 CDN -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+        #app {
+            padding: 20px;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: rgb(2, 252, 131);
+            color: #050505;
+            padding: 10px 20px;
+        }
+        header img {
+            height: 40px;
+        }
+        nav {
+            display: flex;
+            justify-content: center;
+            background-color: #e9fe02;
+
+        }
+        nav a {
+            color: #0c0c0c;
+            padding: 14px 20px;
+            text-decoration: none;
+            text-align: center;
+            transition: background-color 0.3s;
+        }
+        nav a:hover {
+            background-color: #555;
+        }
+        .search-login {
+            display: flex;
+            align-items: center;
+        }
+        .search-login input[type="text"] {
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            margin-right: 10px;
+        }
+        .search-login button {
+            background-color: #66f8aa;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 14px;
+        }
+        .search-login button:hover {
+            background-color: #6eedc1;
+        }
+        footer {
+            text-align: center;
+            padding: 10px 0;
+            background-color: #333;
+            color: #fff;
+            margin-top: 20px;
+        }
+        input[type="text"], input[type="email"], input[type="password"] {
+            width: 200px;
+            padding: 10px;
+            margin: 10px 0;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        button {
+            background-color: #5fe480;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, box-shadow 0.3s;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0056b3;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        button:active {
+            background-color: #004085;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        .scroll-container {
+            width: 100%;
+            overflow: hidden;
+            white-space: nowrap;
+            position: relative;
+        }
+        .scroll-images {
+            display: flex;
+            transition: transform 0.5s ease;
+        }
+        .scroll-images img {
+            width: 100vw;
+            height: 80vh;
+            object-fit: cover;
+        }
+        .scroll-images img {
+            min-width: 100%;
+            transition: opacity 0.5s;
+        }
+        .scroll-dots {
+            text-align: center;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+        }
+        .scroll-dots span {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            margin: 5px;
+            background: #fff;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .scroll-dots span.active {
+            background: #007bff;
+        }
+        .product-card {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            max-width: 400px;
+            transition: transform 0.2s ease-in-out;
+            flex: 0 0 auto; /* 禁止伸缩，保持原始大小 */
+            margin-right: 20px; /* 可根据需要调整间距 */
+        }
+        .product-card:hover {
+            transform: scale(1.05);
+        }
+        .product-image img {
+            width: 100%;
+            height: auto;
+        }
+        .product-content {
+            padding: 20px;
+        }
+        .product-title {
+            font-size: 1.5em;
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+        .product-summary {
+            font-size: 1em;
+            color: #666;
+            margin-bottom: 20px;
+        }
+        .read-more {
+            text-decoration: none;
+            color: #fff;
+            background: linear-gradient(45deg, #ff6b6b, #f94d6a);
+            padding: 10px 20px;
+            border-radius: 5px;
+        }
+        .read-more:hover {
+            background: linear-gradient(45deg, #f94d6a, #ff6b6b);
+        }
+        .product-container {
+            display: flex;
+            flex-wrap: nowrap; /* 不换行 */
+            overflow-x: auto; /* 水平滚动 */
+            -webkit-overflow-scrolling: touch; /* iOS平滑滚动 */
+        }
+        input, textarea {
+            margin-bottom: 10px;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <el-container>
+        <el-header>
+            <img src="logo.gif" alt="Logo">
+            <h2>二手交易系统</h2>
+        </el-header>
+        <nav>
+            <a href="#home" @click="handleSelect('1')">首页</a>
+            <a href="#products" @click="handleSelect('2')">商品管理</a>
+            <a href="#ads" @click="handleSelect('3')">广告页面</a>
+            <a href="#community" @click="handleSelect('4')">社区</a>
+            <a href="#profile" @click="handleSelect('5')">个人中心</a>
+            <a href="#contact" @click="handleSelect('6')">联系我们</a>
+        </nav>
+        <el-container>
+            <el-aside width="100px">
+                <el-menu
+                        @select="handleSelect"
+                        :default-active="activeIndex"
+                        class="el-menu-vertical-demo">
+                    <el-menu-item index="1">首页</el-menu-item>
+                    <el-menu-item index="2">商品管理</el-menu-item>
+                    <el-menu-item index="3">广告页面</el-menu-item>
+                    <el-menu-item index="4">社区</el-menu-item>
+                    <el-menu-item index="5">个人中心</el-menu-item>
+                    <el-menu-item index="6">联系我们</el-menu-item>
+                </el-menu>
+            </el-aside>
+            <el-main>
+                <div v-if="activeIndex === '1'">
+                    <div class="scroll-container">
+                        <div class="scroll-images">
+                            <img src="xianyu.png" alt="二手交易系统">
+                            <img src="img_2.png" alt="二手交易系统">
+                            <img src="chuanda.jpg" alt="二手交易系统">
+                        </div>
+                        <div class="scroll-dots">
+                            <span v-for="(dot, index) in images.length" :key="index" :class="{ active: currentImageIndex === index }" @click="changeImage(index)"></span>
+                        </div>
+                    </div>
+                </div>
+                <div v-if="activeIndex === '2'">
+                    <div>
+                        <el-input v-model="searchQuery" placeholder="请输入商品名称"></el-input>
+                        <el-button @click="searchCommodity">搜索</el-button>
+                    </div>
+                    <el-table :data="commodityData" style="width: 100%">
+                        <el-table-column prop="id" label="商品编号" width="180"></el-table-column>
+                        <el-table-column prop="name" label="商品名称"></el-table-column>
+                        <el-table-column prop="price" label="价格"></el-table-column>
+                        <el-table-column prop="description" label="描述"></el-table-column>
+                        <el-table-column prop="seller" label="卖家"></el-table-column>
+                        <el-table-column prop="phone" label="联系方式"></el-table-column>
+                        <el-table-column label="操作">
+                            <template slot-scope="scope">
+                                <el-button @click="editCommodity(scope.row)">编辑</el-button>
+                                <el-button @click="deleteCommodityRecord(scope.row.id)">删除</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                    <div>
+                        <el-input v-model="commodityForm.id" placeholder="商品编号"></el-input>
+                        <el-input v-model="commodityForm.name" placeholder="商品名称"></el-input>
+                        <el-input v-model="commodityForm.price" placeholder="价格"></el-input>
+                        <el-input v-model="commodityForm.description" placeholder="描述"></el-input>
+                        <el-input v-model="commodityForm.seller" placeholder="卖家"></el-input>
+                        <el-input v-model="commodityForm.phone" placeholder="联系方式"></el-input>
+                        <el-button @click="addCommodityRecord">添加商品</el-button>
+                    </div>
+                    <div v-for="item in list" :key="item.id">
+                        {{ item }}
+                    </div>
+                </div>
+                <div v-if="activeIndex === '3'">
+                    <div>
+                        <div class="product-container">
+                            <div class="product-card">
+                                <div class="product-image">
+                                    <img src="guanggao.jpg" alt="News Image">
+                                </div>
+                                <div class="product-content">
+                                    <h2 class="product-title">二手交易系统1.0正式上线</h2>
+                                    <p class="product-summary">震惊！罗允宏与李云逸的二手交易系统取得阶段性成果。</p>
+                                    <a href="#" class="read-more">点击阅读全文</a>
+                                </div>
+                            </div>
+                            <div class="product-card">
+                                <div class="product-image">
+                                    <img src="guanggao.jpg" alt="News Image">
+                                </div>
+                                <div class="product-content">
+                                    <h2 class="product-title">二手交易系统命名为“卖个川川”</h2>
+                                    <p class="product-summary">再次震惊！二手交易系统获新名并有了logo,海报，热例庆祝！。</p>
+                                    <a href="#" class="read-more">点击阅读全文</a>
+                                </div>
+                            </div>
+                            <div class="product-card">
+                                <div class="product-image">
+                                    <img src="guanggao.jpg" alt="News Image">
+                                </div>
+                                <div class="product-content">
+                                    <h2 class="product-title">“卖个川川”1.02版今日上线</h2>
+                                    <p class="product-summary">继续震惊！“卖个川川”取得突破性进展，实现更多功能并通过稳定性测验。</p>
+                                    <a href="#" class="read-more">点击阅读全文</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div v-if="activeIndex === '4'">
+                    <h2>社区</h2>
+                    <el-table :data="messageData" style="width: 80%">
+                        <el-table-column prop="message_id" label="发布编号" width="180px"></el-table-column>
+                        <el-table-column prop="addname" label="发布者" width="180px"></el-table-column>
+                        <el-table-column prop="data" label="留言内容" width="600px"></el-table-column>
+                        <el-table-column label="操作" width="120px">
+                            <template slot-scope="scope">
+                                <button @click="deleteMessage(scope.row.message_id)">删除</button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                    <div>
+                        <input type="text" v-model="addname" placeholder="发布者"><br>
+                        <input type="text" v-model="data" placeholder="留言内容"><br>
+                        <button type="button" @click="addMessage">添加</button>
+                    </div>
+                    <div v-for="message in list" >
+                        {{ message }}
+                    </div>
+                </div>
+                <div v-if="activeIndex === '5'">
+                    <h2>个人中心</h2>
+                    <div class="product-container">
+                        <img class="avatar" src="lyy.bmp" alt="头像" width="500px" height="500px">
+                        <form id="profileForm">
+                            <input type="text" id="nameInput" placeholder="李云逸" required>
+                            <input type="email" id="passwordInput" placeholder="密码：123456" required>
+                            <div>
+                                <textarea id="bioInput" placeholder="个人简介" rows="4"></textarea>
+                            </div>
+                            <input type="submit" value="保存">
+                        </form>
+                    </div>
+                </div>
+                <div v-if="activeIndex === '6'">
+                    <h2>联系我们</h2>
+                    <h1>四川大学西元六舍201B</h1>
+                    <h2>E-MAIL: 3295621806@qq.com</h2>
+                    <img src="img_3.png" width="800px" height="400px">
+                </div>
+            </el-main>
+        </el-container>
+    </el-container>
+    <footer>
+        <p>&copy; 2024 四川大学-卖个川川（李云逸&罗允宏）. 版权所有.</p>
+    </footer>
+</div>
+
+<!-- 引入 Vue 和 Element UI 的脚本 -->
+<script src="https://unpkg.com/vue@2/dist/vue.js"></script>
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+    var vue = new Vue({
+        el: '#app',
+        data: function () {
+            return {
+                activeIndex: '1',
+                searchQuery: '',
+                commodityForm: {
+                    id: '',
+                    name: '',
+                    price: '',
+                    description: '',
+                    seller: '',
+                    phone:'',
+                },
+                commodityData: [],
+                isEditing: false,
+                editCommodityForm: {
+                    id: '',
+                    name: '',
+                    category: '',
+                    price: '',
+                    description: '',
+                    seller: '',
+                    phone:'',
+                },
+                images: [
+                    'secondhand1.jpg',
+                    'secondhand2.jpg',
+                    'secondhand3.jpg'
+                ],
+                currentImageIndex: 0
+            };
+        },
+        methods: {
+            handleSelect(key) {
+                this.activeIndex = key;
+                if (key === '2') {
+                    this.getCommodityRecord();
+                }
+            },
+            getCommodityRecord() {
+                axios.post("/commodity/get_record", {}).then((res) => {
+                    console.log(res.data.Data);
+                    this.commodityData = res.data.Data; // 直接替换为从服务器获取的数据
+                    console.log(this.commodityData);
+                }).catch((err) => {
+                    console.log(err);
+                });
+            },
+            addCommodityRecord() {
+                alert("成功添加" + this.commodityForm.id);
+                axios.post("/commodity/add_record", {
+                    id: this.commodityForm.id,
+                    name: this.commodityForm.name,
+                    price: this.commodityForm.price,
+                    description: this.commodityForm.description,
+                    seller: this.commodityForm.seller,
+                    phone:this.commodityForm.phone,
+                }).then((res) => {
+                    console.log(res);
+                    this.getCommodityRecord();
+                }).catch((err) => {
+                    console.log(err);
+                });
+            },
+            deleteCommodityRecord(id) {
+                axios.post("/commodity/delete_record", {
+                    id: id
+                }).then((res) => {
+                    console.log(res.data.Data);
+                    // 更新本地表格数据
+                    this.commodityData = this.commodityData.filter(record => record.id !== id);
+                    console.log(this.commodityData);
+                }).catch((err) => {
+                    console.log(err);
+                });
+            },
+            editCommodity(commodity) {
+                this.isEditing = true;
+                this.editCommodityForm = { ...commodity };
+            },
+            updateCommodityRecord() {
+                axios.post("/commodity/update_record", {
+                    id: this.editCommodityForm.id,
+                    name: this.editCommodityForm.name,
+                    price: this.editCommodityForm.price,
+                    description: this.editCommodityForm.description,
+                    seller: this.editCommodityForm.seller,
+                    phone: this.editCommodityForm.phone
+                }).then((res) => {
+                    console.log(res);
+                    this.isEditing = false;
+                    this.getCommodityRecord();
+                }).catch((err) => {
+                    console.log(err);
+                });
+            },
+            getMessage() {
+                axios.post("/message/get_message", {}).then(function (res) {
+                    console.log(res.data.messageData);
+                    vue.messageData = res.data.messageData; // 直接替换为从服务器获取的数据
+                    console.log(vue.messageData);
+                }).catch(function (err) {
+                    console.log(err);
+                });
+            },
+            addMessage() {
+                // 生成唯一的 message_id
+                // this.message_id = this.generateUniqueId();  // 如果没有定义generateUniqueId, 可以注释掉这一行
+                axios.post("/message/add_message", {
+                    message_id: Date.now(), // 可以使用时间戳作为简单的唯一ID
+                    addname: this.addname,
+                    data: this.data,
+                }).then((res) => {
+                    alert("成功添加留言内容： " + this.data);
+                    console.log(res);
+                    this.getMessage(); // 添加成功后刷新留言列表
+                }).catch((err) => {
+                    console.log(err);
+                });
+            },
+            deleteMessage(message_id) {
+                axios.post("/message/delete_message", {
+                    message_id: message_id,
+                }).then(function (res) {
+                    console.log(res.data.messageData);
+                    // 更新本地表格数据
+                    vue.messageData = vue.messageData.filter(record => record.message_id !== message_id);
+                    console.log(vue.messageData);
+                }).catch(function (err) {
+                    console.log(err);
+                });
+            },
+            cancelEdit() {
+                this.isEditing = false;
+                this.editCommodityForm = {
+                    product_id: '',
+                    product_name: '',
+                    category: '',
+                    price: '',
+                    description: '',
+                    seller: '',
+                    status: ''
+                };
+            },
+            changeImage(index) {
+                this.currentImageIndex = index;
+                const scrollImages = this.$el.querySelector('.scroll-images');
+                scrollImages.style.transform = `translateX(-${index * 100}%)`;
+            },
+            searchCommodity() {
+                if (this.searchQuery.trim() === '') {
+                    this.getCommodityRecord(); // 若搜索框为空，则重新获取所有商品记录
+                    return;
+                }
+                axios.post("/commodity/search_record", {
+                    name: this.searchQuery
+                }).then((res) => {
+                    console.log(res.data.Data);
+                    this.commodityData = res.data.Data; // 替换为搜索结果
+                    console.log(this.commodityData);
+                }).catch((err) => {
+                    console.log(err);
+                });
+            }
+        },
+
+        mounted() {
+            this.getCommodityRecord(); // 在组件挂载时获取商品列表
+            this.getMessage();
+        }
+    });
+</script>
+</body>
+</html>
